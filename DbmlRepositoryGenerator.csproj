@@ -8,7 +8,7 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>DbmlRepositoryGenerator</PackageId>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Authors>Your Name</Authors>
     <Company>Your Company</Company>
     <Description>A .NET tool for generating Entity Framework repositories and Unit of Work pattern from DBML schema files. Supports multiple database providers and customizable templates.</Description>
@@ -49,6 +49,7 @@
   </ItemGroup>
 
 </Project>
+
 
 
 

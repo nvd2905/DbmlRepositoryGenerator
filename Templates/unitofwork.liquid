@@ -1,0 +1,74 @@
+//************************************************************************
+//*         TRADE SECRET MATERIAL OF PENTANA SOLUTIONS PTY LTD           *
+//*             TRADE SECRET MATERIAL SUBJECT TO LICENCE                 *
+//************************************************************************
+
+using Microsoft.EntityFrameworkCore.Storage;
+using {{ namespace }}.Application.Common.Interfaces;
+
+namespace {{ namespace }}.Infrastructure.Tenant.Data.Repositories;
+
+public class UnitOfWork : IUnitOfWork
+{
+    protected readonly ApplicationTenantDbContext _context;
+
+    public UnitOfWork(ApplicationTenantDbContext context)
+    {
+        _context = context;
+    }
+
+    #region IRepository
+
+    {% for repo in repositories %}
+        private {{ repo.interface_name }}? _{{ repo.field_name }};
+        {% endfor %}
+
+    #endregion IRepository
+
+    #region Repository
+
+    {% for repo in repositories %}
+        public {{ repo.interface_name }} {{ repo.repository_name }}
+        {
+            get { return _{{ repo.field_name }} ??= new {{ repo.entity_name }}Repository(_context); }
+        }
+        {% endfor %}
+
+    #endregion
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    private bool disposed = false;
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.disposed && disposing)
+        {
+            _context.Dispose();
+        }
+        this.disposed = true;
+    }
+
+    public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidDataException("An error occurred while saving the entity changes", ex);
+        }
+    }
+
+    public IDbContextTransaction BeginTransaction()
+    {
+        return _context.Database.BeginTransaction();
+    }
+}

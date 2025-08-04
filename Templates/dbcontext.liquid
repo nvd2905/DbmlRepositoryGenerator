@@ -1,0 +1,30 @@
+using Microsoft.EntityFrameworkCore;
+using {{ namespace }}.Entities;
+
+namespace {{ namespace }}
+{
+    public class {{ class_name }} : DbContext
+    {
+        public {{ class_name }}(DbContextOptions<{{ class_name }}> options)
+            : base(options)
+        {
+        }
+
+        {% for entity in entities %}
+        public DbSet<{{ entity.entity_name }}> {{ entity.db_set_name }} { get; set; }
+        {% endfor %}
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            {% for relationship in relationships %}
+            // Configure {{ relationship.from_entity }} -> {{ relationship.to_entity }} relationship
+            modelBuilder.Entity<{{ relationship.from_entity }}>()
+                .HasOne<{{ relationship.to_entity }}>()
+                {% if relationship.relation_type == '1:n' %}.WithMany(){% else %}.WithOne(){% endif %}
+                .HasForeignKey("{{ relationship.from_column }}");
+            {% endfor %}
+        }
+    }
+}

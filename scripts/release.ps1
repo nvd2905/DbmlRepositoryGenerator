@@ -45,7 +45,16 @@ Write-Host "✅ Package created successfully" -ForegroundColor Green
 # Git operations
 Write-Host "📝 Committing changes..." -ForegroundColor Yellow
 git add .
-git commit -m "Release version $Version`n$Message"
+git status
+if (-not (git diff --cached --quiet)) {
+    git commit -m "Release version $Version" -m "$Message"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Commit failed!"
+        exit 1
+    }
+} else {
+    Write-Host "⚠ No changes to commit"
+}
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Commit failed!"
     exit 1

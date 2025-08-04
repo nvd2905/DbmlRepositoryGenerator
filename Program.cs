@@ -79,7 +79,7 @@ namespace SampleUsage
 
                     var parser = serviceProvider.GetRequiredService<DbmlParser>();
                     
-                    await GenerateFromFileExample(namespaceName);
+                    await GenerateFromFileExample(namespaceName, input.FullName, output.FullName);
 
 
                     logger.LogInformation("✅ Generation completed successfully!");
@@ -95,14 +95,14 @@ namespace SampleUsage
             return await rootCommand.InvokeAsync(args);
         }
 
-        private static async Task GenerateFromFileExample(string targetNamespace)
+        private static async Task GenerateFromFileExample(string targetNamespace, string input, string output)
         {
             Console.WriteLine("=== Generating from DBML file ===");
 
             var options = new GeneratorOptions
             {
                 Namespace = targetNamespace,
-                OutputDirectory = "./Generated",
+                OutputDirectory = output,
                 TemplateDirectory = "./Templates",
                 GenerateAsync = true,
                 GenerateInterfaces = true,
@@ -116,7 +116,7 @@ namespace SampleUsage
             };
 
             var generator = new DbmlRepositoryGeneratorFacade();
-            await generator.GenerateFromFileAsync("sample.dbml", options);
+            await generator.GenerateFromFileAsync(input, options);
 
             Console.WriteLine("Generated files:");
             if (Directory.Exists("./Generated"))

@@ -78,7 +78,7 @@ namespace SampleUsage
                     logger.LogInformation("Namespace: {Namespace}", namespaceName);
 
                     var parser = serviceProvider.GetRequiredService<DbmlParser>();
-                    //var generator = serviceProvider.GetRequiredService<RepositoryGenerator>();
+                    
                     await GenerateFromFileExample(namespaceName);
 
 

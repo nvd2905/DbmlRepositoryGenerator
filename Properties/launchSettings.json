@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DbmlRepositoryGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "-i .\\DbmlFile\\Inventory/sample.dbml -o C:\\Projects\\Personals\\zxc -n MyNamespace"
+    }
+  }
+}

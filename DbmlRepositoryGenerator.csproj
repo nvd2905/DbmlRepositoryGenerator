@@ -8,7 +8,7 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>DbmlRepositoryGenerator</PackageId>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
     <Authors>Your Name</Authors>
     <Company>Your Company</Company>
     <Description>A .NET tool for generating Entity Framework repositories and Unit of Work pattern from DBML schema files. Supports multiple database providers and customizable templates.</Description>
@@ -47,8 +47,35 @@
     <None Include="README.md" Pack="true" PackagePath="/" />
     <None Include="icon.png" Pack="true" PackagePath="/" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="DbmlFile\Inventory\sample.dbml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\configuration.liquid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\dbcontext.liquid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\entity.liquid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\repository-interface.liquid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\repository.liquid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\unitofwork-interface.liquid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\unitofwork.liquid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>
+
 
 
 

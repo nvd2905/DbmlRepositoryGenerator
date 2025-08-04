@@ -115,7 +115,8 @@ public class RepositoryGenerator
                 { "repository.liquid", _templateManager.GetDefaultTemplate("repository") },
                 { "unitofwork-interface.liquid", _templateManager.GetDefaultTemplate("unitofwork-interface") },
                 { "unitofwork.liquid", _templateManager.GetDefaultTemplate("unitofwork") },
-                { "dbcontext.liquid", _templateManager.GetDefaultTemplate("dbcontext") }
+                { "dbcontext.liquid", _templateManager.GetDefaultTemplate("dbcontext") },
+                { "configuration.liquid", _templateManager.GetDefaultTemplate("configuration") }
             };
 
             foreach (var template in templates)

@@ -51,230 +51,171 @@ public class TemplateManager
             "unitofwork-interface" => GetDefaultUnitOfWorkInterfaceTemplate(),
             "unitofwork" => GetDefaultUnitOfWorkTemplate(),
             "dbcontext" => GetDefaultDbContextTemplate(),
+            "configuration" => GetDefaultConfigurationTemplate(),
             _ => throw new ArgumentException($"Unknown template: {templateName}")
         };
     }
 
     private string GetDefaultEntityTemplate()
     {
-        return @"using System;
-using System.ComponentModel.DataAnnotations;
+        return @"//************************************************************************
+//*         TRADE SECRET MATERIAL OF PENTANA SOLUTIONS PTY LTD           *
+//*             TRADE SECRET MATERIAL SUBJECT TO LICENCE                 *
+//************************************************************************
+
+using {{ namespace }}.Domain.Common;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace {{ namespace }}.Entities
+namespace {{ namespace }}.Domain.Entities;
+[Table(""{{ table_name }}"")]
+public class {{ class_name }}
 {
-    [Table(""{{ table_name }}"")]
-    public class {{ class_name }}
-    {
-        {% for property in properties %}
-        {% if property.is_primary_key %}[Key]{% endif %}
-        {% if property.is_increment and property.is_primary_key %}[DatabaseGenerated(DatabaseGeneratedOption.Identity)]{% endif %}
-        [Column(""{{ property.column_name }}"")]
-        {% if property.is_not_null and property.clr_type == 'string' %}[Required]{% endif %}
-        public {{ property.clr_type }}{% if property.is_nullable %}?{% endif %} {{ property.property_name }} { get; set; }
-        
-        {% endfor %}
-    }
+    {% for property in properties %}
+    {% if property.is_primary_key %}[Key]{% endif %}
+    {% if property.is_increment and property.is_primary_key %}[DatabaseGenerated(DatabaseGeneratedOption.Identity)]{% endif %}
+    [Column(""{{ property.column_name }}"")]
+    {% if property.is_not_null and property.clr_type == 'string' %}[Required]{% endif %}
+    public {{ property.clr_type }}{% if property.is_nullable %}?{% endif %} {{ property.property_name }} { get; set; }
+    
+    {% endfor %}
 }";
     }
 
     private string GetDefaultRepositoryInterfaceTemplate()
     {
-        return @"using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-{% if generate_async %}using System.Threading.Tasks;{% endif %}
-using {{ namespace }}.Entities;
+        return @"//************************************************************************
+//*         TRADE SECRET MATERIAL OF PENTANA SOLUTIONS PTY LTD           *
+//*             TRADE SECRET MATERIAL SUBJECT TO LICENCE                 *
+//************************************************************************
 
-namespace {{ namespace }}.Repositories
+namespace {{ namespace }}.Application.Common.Interfaces;
+
+public interface {{ interface_name }} : IBaseRepository<{{ entity_name }}, int>
 {
-    public interface {{ interface_name }} : IRepository<{{ entity_name }}>
-    {
-        // Add custom methods here
-    }
-
-    public interface IRepository<T> where T : class
-    {
-        {% if generate_async %}
-        Task<T?> GetByIdAsync(object id);
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
-        Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
-        Task AddAsync(T entity);
-        Task AddRangeAsync(IEnumerable<T> entities);
-        Task<bool> RemoveAsync(object id);
-        Task<int> SaveChangesAsync();
-        {% else %}
-        T? GetById(object id);
-        IEnumerable<T> GetAll();
-        IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
-        T? FirstOrDefault(Expression<Func<T, bool>> predicate);
-        void Add(T entity);
-        void AddRange(IEnumerable<T> entities);
-        bool Remove(object id);
-        int SaveChanges();
-        {% endif %}
-        void Update(T entity);
-        void Remove(T entity);
-        void RemoveRange(IEnumerable<T> entities);
-    }
 }";
     }
 
     private string GetDefaultRepositoryTemplate()
     {
-        return @"using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-{% if generate_async %}using System.Threading.Tasks;{% endif %}
-using Microsoft.EntityFrameworkCore;
-using {{ namespace }}.Entities;
+        return @"//************************************************************************
+//*         TRADE SECRET MATERIAL OF PENTANA SOLUTIONS PTY LTD           *
+//*             TRADE SECRET MATERIAL SUBJECT TO LICENCE                 *
+//************************************************************************
 
-namespace {{ namespace }}.Repositories
+using {{ namespace }}.Application.Common.Interfaces;
+
+namespace {{ namespace }}.Infrastructure.Tenant.Data.Repositories;
+
+namespace {{ namespace }}.Repositories;
+
+public class {{ class_name }} : BaseRepository<{{ class_name }}, int>, {{ interface_name }}
 {
-    public class {{ class_name }} : {{ interface_name }}
+    private readonly ApplicationTenantDbContext _tenantDbContext;
+    public {{ class_name }}(ApplicationTenantDbContext tenantDbContext) : base(tenantDbContext)
     {
-        private readonly DbContext _context;
-        private readonly DbSet<{{ entity_name }}> _dbSet;
-
-        public {{ class_name }}(DbContext context)
-        {
-            _context = context;
-            _dbSet = context.Set<{{ entity_name }}>();
-        }
-
-        {% if generate_async %}
-        public async Task<{{ entity_name }}?> GetByIdAsync(object id)
-        {
-            return await _dbSet.FindAsync(id);
-        }
-
-        public async Task<IEnumerable<{{ entity_name }}>> GetAllAsync()
-        {
-            return await _dbSet.ToListAsync();
-        }
-
-        public async Task<IEnumerable<{{ entity_name }}>> FindAsync(Expression<Func<{{ entity_name }}, bool>> predicate)
-        {
-            return await _dbSet.Where(predicate).ToListAsync();
-        }
-
-        public async Task<{{ entity_name }}?> FirstOrDefaultAsync(Expression<Func<{{ entity_name }}, bool>> predicate)
-        {
-            return await _dbSet.FirstOrDefaultAsync(predicate);
-        }
-
-        public async Task AddAsync({{ entity_name }} entity)
-        {
-            await _dbSet.AddAsync(entity);
-        }
-
-        public async Task AddRangeAsync(IEnumerable<{{ entity_name }}> entities)
-        {
-            await _dbSet.AddRangeAsync(entities);
-        }
-
-        public async Task<bool> RemoveAsync(object id)
-        {
-            var entity = await GetByIdAsync(id);
-            if (entity != null)
-            {
-                _dbSet.Remove(entity);
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _context.SaveChangesAsync();
-        }
-        {% endif %}
-
-        public void Update({{ entity_name }} entity)
-        {
-            _dbSet.Update(entity);
-        }
-
-        public void Remove({{ entity_name }} entity)
-        {
-            _dbSet.Remove(entity);
-        }
-
-        public void RemoveRange(IEnumerable<{{ entity_name }}> entities)
-        {
-            _dbSet.RemoveRange(entities);
-        }
+        _tenantDbContext = tenantDbContext;
     }
 }";
     }
 
     private string GetDefaultUnitOfWorkInterfaceTemplate()
     {
-        return @"using System;
-{% if generate_async %}using System.Threading.Tasks;{% endif %}
-using {{ namespace }}.Repositories;
+        return @"//************************************************************************
+//*         TRADE SECRET MATERIAL OF PENTANA SOLUTIONS PTY LTD           *
+//*             TRADE SECRET MATERIAL SUBJECT TO LICENCE                 *
+//************************************************************************
 
-namespace {{ namespace }}
+using Microsoft.EntityFrameworkCore.Storage;
+
+namespace {{ namespace }}.Application.Common.Interfaces;
+
+public interface IUnitOfWork : IDisposable
 {
-    public interface IUnitOfWork : IDisposable
-    {
-        {% for repo in repositories %}
+    #region Repository
+    {% for repo in repositories %}
         {{ repo.interface_name }} {{ repo.repository_name }} { get; }
         {% endfor %}
+    #endregion
 
-        {% if generate_async %}Task<int> CompleteAsync();{% endif %}
-        int Complete();
-    }
+    Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
+    IDbContextTransaction BeginTransaction();
 }";
     }
 
     private string GetDefaultUnitOfWorkTemplate()
     {
-        return @"using System;
-{% if generate_async %}using System.Threading.Tasks;{% endif %}
-using Microsoft.EntityFrameworkCore;
-using {{ namespace }}.Entities;
-using {{ namespace }}.Repositories;
+        return @"//************************************************************************
+//*         TRADE SECRET MATERIAL OF PENTANA SOLUTIONS PTY LTD           *
+//*             TRADE SECRET MATERIAL SUBJECT TO LICENCE                 *
+//************************************************************************
 
-namespace {{ namespace }}
+using Microsoft.EntityFrameworkCore.Storage;
+using {{ namespace }}.Application.Common.Interfaces;
+
+namespace {{ namespace }}.Infrastructure.Tenant.Data.Repositories;
+
+public class UnitOfWork : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    protected readonly ApplicationTenantDbContext _context;
+
+    public UnitOfWork(ApplicationTenantDbContext context)
     {
-        private readonly DbContext _context;
-        {% for repo in repositories %}
+        _context = context;
+    }
+
+    #region IRepository
+
+    {% for repo in repositories %}
         private {{ repo.interface_name }}? _{{ repo.field_name }};
         {% endfor %}
 
-        public UnitOfWork(DbContext context)
-        {
-            _context = context;
-        }
+    #endregion IRepository
 
-        {% for repo in repositories %}
+    #region Repository
+
+    {% for repo in repositories %}
         public {{ repo.interface_name }} {{ repo.repository_name }}
         {
             get { return _{{ repo.field_name }} ??= new {{ repo.entity_name }}Repository(_context); }
         }
         {% endfor %}
 
-        {% if generate_async %}
-        public async Task<int> CompleteAsync()
-        {
-            return await _context.SaveChangesAsync();
-        }
-        {% endif %}
+    #endregion
 
-        public int Complete()
-        {
-            return _context.SaveChanges();
-        }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        public void Dispose()
+    private bool disposed = false;
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.disposed && disposing)
         {
             _context.Dispose();
         }
+        this.disposed = true;
+    }
+
+    public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidDataException(""An error occurred while saving the entity changes"", ex);
+        }
+    }
+
+    public IDbContextTransaction BeginTransaction()
+    {
+        return _context.Database.BeginTransaction();
     }
 }";
     }
@@ -309,6 +250,30 @@ namespace {{ namespace }}
                 .HasForeignKey(""{{ relationship.from_column }}"");
             {% endfor %}
         }
+    }
+}";
+    }
+
+    private string GetDefaultConfigurationTemplate()
+    {
+        return @"//************************************************************************
+//*         TRADE SECRET MATERIAL OF PENTANA SOLUTIONS PTY LTD           *
+//*             TRADE SECRET MATERIAL SUBJECT TO LICENCE                 *
+//************************************************************************
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace {{ namespace }}.Domain.Entities;
+
+public class {{ table_name }}Configuration : IEntityTypeConfiguration<{{ table_name }}>
+{
+    public void Configure(EntityTypeBuilder<{{ table_name }}> builder)
+    {
+{% for property in properties %}
+        builder.Property(x => x.{{ property.column_name }});{% if property.is_primary_key %}
+        builder.HasKey(x => x.{{ property.column_name }});{% endif %}
+{% endfor %}
     }
 }";
     }

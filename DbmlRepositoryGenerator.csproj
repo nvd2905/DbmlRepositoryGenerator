@@ -8,17 +8,17 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>DbmlRepositoryGenerator</PackageId>
-    <Version>2.0.0</Version>
-    <Authors>Your Name</Authors>
-    <Company>Your Company</Company>
+    <Version>2.0.1</Version>
+    <Authors>nvd</Authors>
+    <Company>MZ</Company>
     <Description>A .NET tool for generating Entity Framework repositories and Unit of Work pattern from DBML schema files. Supports multiple database providers and customizable templates.</Description>
     <PackageTags>dbml;entity-framework;repository;unit-of-work;code-generation;dotnet-tool</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
-    <RepositoryUrl>https://github.com/yourusername/DbmlRepositoryGenerator</RepositoryUrl>
+    <RepositoryUrl>https://github.com/nvd2905/DbmlRepositoryGenerator</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/yourusername/DbmlRepositoryGenerator</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/nvd2905/DbmlRepositoryGenerator</PackageProjectUrl>
     <PackageReleaseNotes>Initial release with DBML to Entity Framework repository generation</PackageReleaseNotes>
     
     <!-- Tool Configuration -->
@@ -49,27 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="DbmlFile\Inventory\sample.dbml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Templates\configuration.liquid">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Templates\dbcontext.liquid">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Templates\entity.liquid">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Templates\repository-interface.liquid">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Templates\repository.liquid">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Templates\unitofwork-interface.liquid">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Templates\unitofwork.liquid">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

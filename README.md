@@ -36,14 +36,14 @@ dbml-repo-gen -i schema.dbml -o ./Generated -n MyNamespace
 ### Example DBML Schema
 
 ```dbml
-Table users {
+Table User {
   id int [pk, increment]
   name varchar(255) [not null]
   email varchar(255) [not null, unique]
   created_at datetime [not null, default: 'now()']
 }
 
-Table posts {
+Table Post {
   id int [pk, increment]
   title varchar(255) [not null]
   content text
@@ -51,7 +51,7 @@ Table posts {
   created_at datetime [not null, default: 'now()']
 }
 
-Ref: posts.user_id > users.id
+Ref: Post.user_id > User.id
 ```
 
 ### Generated Output
@@ -70,9 +70,6 @@ The tool generates:
 
 Supported database providers:
 - SQL Server (default)
-- MySQL
-- PostgreSQL
-- SQLite
 
 ### Custom Templates
 

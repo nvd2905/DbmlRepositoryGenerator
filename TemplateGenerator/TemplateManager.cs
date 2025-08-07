@@ -68,15 +68,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace {{ namespace }}.Domain.Entities;
 [Table(""{{ table_name }}"")]
-public class {{ class_name }}
+public class {{ class_name }} : AuditableEntity<int>
 {
     {% for property in properties %}
-    {% if property.is_primary_key %}[Key]{% endif %}
-    {% if property.is_increment and property.is_primary_key %}[DatabaseGenerated(DatabaseGeneratedOption.Identity)]{% endif %}
     [Column(""{{ property.column_name }}"")]
     {% if property.is_not_null and property.clr_type == 'string' %}[Required]{% endif %}
     public {{ property.clr_type }}{% if property.is_nullable %}?{% endif %} {{ property.property_name }} { get; set; }
-    
     {% endfor %}
 }";
     }

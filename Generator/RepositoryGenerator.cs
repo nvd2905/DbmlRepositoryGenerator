@@ -94,7 +94,7 @@ public class RepositoryGenerator
             custom = _options.CustomVariables
         }));
 
-        var outputDirectory = Path.Combine(_options.OutputDirectory, $"{model.Namespace}.Application", "Common", "Interfaces");
+        var outputDirectory = Path.Combine(_options.OutputDirectory, $"{model.Namespace}.Infrastructure.Tenant", "Data", "Configurations");
         var filePath = Path.Combine(outputDirectory, $"{model.TableName}Configuration.cs");
         if (!Directory.Exists(outputDirectory))
             Directory.CreateDirectory(outputDirectory);
@@ -135,14 +135,14 @@ public class RepositoryGenerator
         {
             Name = table.Name,
             ClassName = ToPascalCase(table.Name),
-            TableName = table.Name,
+            TableName = ToPascalCase(table.Name),
             Namespace = _options.Namespace,
             Note = table.Note,
-            Properties = table.Columns.Select(c => new PropertyTemplateModel
+            Properties = table.Columns.Where(w => !w.Name.Equals("id", StringComparison.OrdinalIgnoreCase)).Select(c => new PropertyTemplateModel
             {
                 Name = c.Name,
                 PropertyName = ToPascalCase(c.Name),
-                ColumnName = c.Name,
+                ColumnName = ToPascalCase(c.Name),
                 Type = c.Type,
                 ClrType = TypeMapper.MapDbTypeToClrType(c.Type, _options.Provider),
                 IsPrimaryKey = c.IsPrimaryKey,
